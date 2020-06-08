@@ -1,0 +1,3 @@
+Comentarios
+
+El desacoplamiento espacial puede resultar muy importante para el desarrollo de los sockets stream utilizados en esta practica que ha sido muy fundamental el control de la memoria y los procesos en sincronizacion para la aplicacion desarrollada
