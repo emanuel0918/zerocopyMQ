@@ -261,8 +261,6 @@ void * servicio(void *arg){
 								fclose (archivo);
 
 								uint32_t sizeof_cadena=sizeof(cadena0);
-								
-								//printf("sizeof_cadena : %d\n",sizeof_cadena);
 
 								struct iovec iov[2];
 								//char cadena[sizeof_cadena];
@@ -281,9 +279,23 @@ void * servicio(void *arg){
 								//}
 								//strcpy(sizeof_mensaje_s,sizeof_mensaje_s1);
 								sprintf(sizeof_mensaje_s, "%d", (int)sizeof_cadena);
+								/*
+								FILE * arch;
+
+								system ("rm binario.txt");
+								system ("echo > binario.txt");
+								arch = fopen ("binario.txt", "w");
+								for (i=0;i<(int)sizeof_cadena;i++){
+									fprintf(arch,"%d\n",(int)(((char*)cadena0)[i]));
+								}
+								
+								//fprintf (arch, "%s", *mensaje);
+								fclose (arch);
+								*/
+								//printf("sizeof_cadena : %d\n",(int)sizeof_cadena);
 								iov[0].iov_base=sizeof_mensaje_s;
 								iov[0].iov_len=TAM_LONG;
-								iov[1].iov_base=cadena0;
+								iov[1].iov_base=( char*)cadena0;
 								iov[1].iov_len=sizeof_cadena;
 								while((leido9=writev(s,iov,2))>0){
 									//send(s,"0\0",(4*sizeof(char)),0);

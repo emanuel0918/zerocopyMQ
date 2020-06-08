@@ -86,7 +86,7 @@ int put(const char *cola, const void *mensaje, uint32_t tam) {
 int get(const char *cola, void **mensaje, uint32_t *tam, bool blocking) {
 
 	int s=obtenerSocket();
-	//int i;
+	int i;
 	char sizeof_mensaje_s[TAM_LONG];
 	char respuesta[4];
 	respuesta[0]='-';respuesta[1]='1';respuesta[2]='\0';
@@ -129,11 +129,12 @@ int get(const char *cola, void **mensaje, uint32_t *tam, bool blocking) {
 					mensaje_s[i]='\0';
 				}
 				*/
-				//*mensaje=(  char*)malloc(sizeof_mensaje*sizeof( char));
-				*mensaje=( void*)malloc(sizeof_mensaje);
+				*mensaje=malloc(sizeof_mensaje);
+				//*mensaje=( unsigned char*)malloc(sizeof_mensaje*sizeof(unsigned char));
+				//*mensaje=malloc(sizeof_mensaje);
 				//printf("sizeof_mensaje : %d\n",sizeof_mensaje);
-				if((leido=recv(s,*mensaje,sizeof_mensaje,MSG_WAITALL)>0)){
-					//printf("cadena : %s\n",mensaje_s);
+				if((leido=recv(s,( char*)*mensaje,sizeof_mensaje,MSG_WAITALL)>0)){
+					//printf("sizeof(cadena) : %d\n",(int)sizeof_mensaje);
 					//strcpy(*mensaje,mensaje_s);
 					/*
 					for(i=0;i<sizeof_mensaje-2;i++){
@@ -145,11 +146,24 @@ int get(const char *cola, void **mensaje, uint32_t *tam, bool blocking) {
 								system ("rm uwu.txt");
 								system ("echo > uwu.txt");
 								archivo = fopen ("uwu.txt", "w");
-								fprintf (archivo, "%s", (( char*)*mensaje));
+								fprintf (archivo, "%s", *mensaje);
 								fclose (archivo);
+									/*
+								FILE * arch;
+
+								
+								system ("rm binario.txt");
+								system ("echo > binario.txt");
+								arch = fopen ("binario.txt", "w");
+								for (i=0;i<sizeof_mensaje;i++){
+									fprintf(arch,"%d\n",(int)(((char*)*mensaje)[i]));
+								}
+								//fprintf (arch, "%s", *mensaje);
+								fclose (arch);
+								*/
 								/* lo de arriba es para probar que se obtiene y
 								 se imprime en un fichero con fprintf */
-					sprintf(*mensaje,"%s",(char*)*mensaje);
+					//sprintf(*mensaje,"%s",(char*)*mensaje);
 					*tam=sizeof_mensaje-2;
 					respuesta[0]='0';respuesta[1]='\0';
 					return atoi(respuesta);
