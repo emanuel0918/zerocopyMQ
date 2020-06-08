@@ -74,7 +74,7 @@ int put(const char *cola, const void *mensaje, uint32_t tam) {
 	iov[3].iov_base=sizeof_mensaje_s;
 	iov[3].iov_len=TAM_LONG;
 	iov[4].iov_base=mensaje;
-	iov[4].iov_len=((int)tam)+1;
+	iov[4].iov_len=((int)tam);
 	while((nwritten=writev(s,iov,5))>0){
 		if(read(s,respuesta,sizeof(respuesta))>0){
 			//close(s);
@@ -121,18 +121,18 @@ int get(const char *cola, void **mensaje, uint32_t *tam, bool blocking) {
 
     	while((leido=read(s, sizeof_mensaje_s,TAM_LONG))>0) {
 			if(sizeof_mensaje_s[0]!='\000'){ 
-				int sizeof_mensaje= atoi(sizeof_mensaje_s);
-				sizeof_mensaje+=1;
+				uint32_t sizeof_mensaje= atoi(sizeof_mensaje_s);
+				
 				/*
 				char mensaje_s[sizeof_mensaje];
 				for( i=0;i<sizeof_mensaje;i++){
 					mensaje_s[i]='\0';
 				}
 				*/
-				*mensaje=(void*)malloc(sizeof_mensaje);
-				*tam=(uint32_t )sizeof_mensaje-2;
+				//*mensaje=(  char*)malloc(sizeof_mensaje*sizeof( char));
+				*mensaje=( void*)malloc(sizeof_mensaje);
 				//printf("sizeof_mensaje : %d\n",sizeof_mensaje);
-				if((leido=recv(s,((char*)*mensaje),sizeof_mensaje,MSG_WAITALL)>0)){
+				if((leido=recv(s,*mensaje,sizeof_mensaje,MSG_WAITALL)>0)){
 					//printf("cadena : %s\n",mensaje_s);
 					//strcpy(*mensaje,mensaje_s);
 					/*
@@ -140,6 +140,17 @@ int get(const char *cola, void **mensaje, uint32_t *tam, bool blocking) {
 						((char*)*mensaje)[i]=mensaje_s[i];
 					}
 					*/
+								FILE * archivo;
+
+								system ("rm uwu.txt");
+								system ("echo > uwu.txt");
+								archivo = fopen ("uwu.txt", "w");
+								fprintf (archivo, "%s", (( char*)*mensaje));
+								fclose (archivo);
+								/* lo de arriba es para probar que se obtiene y
+								 se imprime en un fichero con fprintf */
+					sprintf(*mensaje,"%s",(char*)*mensaje);
+					*tam=sizeof_mensaje-2;
 					respuesta[0]='0';respuesta[1]='\0';
 					return atoi(respuesta);
 					//mensaje=(void **)&mensaje_s;

@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
             if(aleatorio1==2){
                 aleatorio2=0;
             }else{
-                aleatorio2=(int)'1';
+                aleatorio2=(int) (rand () % (255));
             }
           cadena[i]=(char)aleatorio2;
       }

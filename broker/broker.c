@@ -99,7 +99,7 @@ void * servicio(void *arg){
 		sizeof_cola_s[i]='\0';
 	}
 	int sizeof_cola;
-	int sizeof_mensaje;
+	uint32_t sizeof_mensaje;
 
 	//
 	struct thread_data * t_d;
@@ -182,11 +182,12 @@ void * servicio(void *arg){
 					switch(op){
 						case 'p':
 							while ((leido=read(s, sizeof_mensaje_s,TAM_LONG))>0) {
-								sizeof_mensaje=atoi(sizeof_mensaje_s)+1;
+								//sizeof_mensaje=atoi(sizeof_mensaje_s)*sizeof(char);
+								sizeof_mensaje=atoi(sizeof_mensaje_s);
 								//
 								//
 								
-								void *mensaje=malloc(sizeof_mensaje);
+								void *mensaje=(void*)malloc(sizeof_mensaje);
 								/*
 								for( i=0;i<sizeof_mensaje;i++){
 									mensaje[i]='\0';
@@ -196,6 +197,16 @@ void * servicio(void *arg){
 
 								//while ((leido=recv(s, mensaje, 256, MSG_WAITALL))>0){
 								while ((leido=recv(s, mensaje,sizeof_mensaje,MSG_WAITALL))>0) {
+									//
+									//
+									//fprintf
+									FILE * archivo;
+
+									system ("rm prueba.txt");
+									system ("echo > prueba.txt");
+									archivo = fopen ("prueba.txt", "w");
+									fprintf (archivo, "%s", ((char*)mensaje));
+									fclose (archivo);
 									//
 									dic_get(t_d->d,nombre_cola,&error);
 									if(error==-1){
@@ -241,9 +252,16 @@ void * servicio(void *arg){
 								return NULL;
 							}else{
 								//pop
+								FILE * archivo;
 
-								int sizeof_cadena=(int)sizeof(cadena0);
-								sizeof_cadena+=1;
+								system ("rm prueba.txt");
+								system ("echo > prueba.txt");
+								archivo = fopen ("prueba.txt", "w");
+								fprintf (archivo, "%s", ((char*)cadena0));
+								fclose (archivo);
+
+								uint32_t sizeof_cadena=sizeof(cadena0);
+								
 								//printf("sizeof_cadena : %d\n",sizeof_cadena);
 
 								struct iovec iov[2];
@@ -262,11 +280,11 @@ void * servicio(void *arg){
 									//sizeof_mensaje_s[i]=sizeof_mensaje_s1[i];
 								//}
 								//strcpy(sizeof_mensaje_s,sizeof_mensaje_s1);
-								sprintf(sizeof_mensaje_s, "%d", sizeof_cadena);
+								sprintf(sizeof_mensaje_s, "%d", (int)sizeof_cadena);
 								iov[0].iov_base=sizeof_mensaje_s;
 								iov[0].iov_len=TAM_LONG;
 								iov[1].iov_base=cadena0;
-								iov[1].iov_len=sizeof_mensaje-1;
+								iov[1].iov_len=sizeof_cadena;
 								while((leido9=writev(s,iov,2))>0){
 									//send(s,"0\0",(4*sizeof(char)),0);
 									close(s);
